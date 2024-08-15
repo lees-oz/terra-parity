@@ -1,0 +1,57 @@
+{
+  "name": "terra-parity",
+  "displayName": "Terraform/terragrunt environments parity",
+  "description": "Quickly find, compare and align code of corresponding infra resources across environments.",
+  "icon": "images/logo.png",
+  "version": "0.0.3",
+  "publisher": "lees-oz",
+  "engines": {
+    "vscode": "^1.92.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "terra-parity.run",
+        "title": "Environments parity"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Terra parity",
+      "properties": {
+        "terra-parity.envs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "A list of environments wildcards applies to resources file path to associate resource with environment and find corresponding resources on other environments"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.92.0",
+    "@types/mocha": "^10.0.7",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^7.14.1",
+    "@typescript-eslint/parser": "^7.11.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.5",
+    "@vscode/test-cli": "^0.0.9",
+    "@vscode/test-electron": "^2.4.0"
+  }
+}

@@ -1,0 +1,4 @@
+- icons to env dropdown menu
+- logo
+- align folders
+- 
