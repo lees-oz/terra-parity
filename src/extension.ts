@@ -56,20 +56,20 @@ export function activate(context: vscode.ExtensionContext) {
 				if (broContent === fileContent) {
 					return {
 						label: `$(check) ${env}`,
-						// detail: `Equal with ${shorten(broPath)}`,
+						detail: `Match:\t\t\t${shorten(broPath)}`,
 						action: compare(fileUri, broUri)
 					};
 				} else {
 					return {
-						label: `$(warning) ${env}`,
-						// detail: `Different with ${shorten(broPath)}`,
+						label: `$(request-changes) ${env}`,
+						detail: `Different:\t\t${shorten(broPath)}`,
 						action: compare(fileUri, broUri)
 					};
 				}
 			} else {
 				return {
-					label: `$(diff-review-insert) ${env}`,
-					// detail: `Add ${shorten(broPath)}`,
+					label: `$(circle-slash) ${env}`,
+					detail: `Not found:\t\t${shorten(broPath)}`,
 					action: 
 					() => {
 						return vscode.workspace.fs.copy(fileUri, broUri).then(compare(fileUri, broUri));
@@ -88,7 +88,8 @@ export function activate(context: vscode.ExtensionContext) {
 		quickPick.show();
 
 		function shorten(p: string): string {
-			return p.replace(root, "");
+			const r = p.replace(root, "");
+			return `...${r.slice(r.length - 70)}`;
 		}
 
 		function compare(a: Uri, b: Uri): () => Thenable<void> {
