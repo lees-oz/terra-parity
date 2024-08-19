@@ -24,13 +24,13 @@
       "type": "object",
       "title": "Terra parity",
       "properties": {
-        "terra-parity.envs": {
+        "terra-parity.Environment paths": {
           "type": "array",
           "items": {
             "type": "string"
           },
           "default": [],
-          "description": "A list of environments wildcards applies to resources file path to associate resource with environment and find corresponding resources on other environments"
+          "description": "Paths to folders that contain environments (dev, test, prod, etc.) under them. Specify two or more paths using \"Add Item\" button"
         }
       }
     }
