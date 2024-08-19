@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { Uri } from 'vscode';
 import { existsSync } from 'fs';
+import { join } from 'path';
 
 interface QuickPickItemWithAction extends vscode.QuickPickItem {
 	action?: () => Thenable<void>;
@@ -16,6 +17,7 @@ const ENVS_SETTING_NAME = "Environment paths";
 
 export function activate(context: vscode.ExtensionContext) {
 	const disposable = vscode.commands.registerCommand(`${EXT_NAME}.run`, async () => {
+		// check repo is opened
 		const workspaceFolders = vscode.workspace.workspaceFolders;
 		if (!workspaceFolders || !workspaceFolders.length) {
 			vscode.window.showErrorMessage(`Open terraform repo first`);
@@ -23,10 +25,12 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		const root = workspaceFolders[0].uri.fsPath;
 
+		// read env paths config
 		const config = vscode.workspace.getConfiguration(EXT_NAME);
-		const envs: string[] | undefined = config.get(ENVS_SETTING_NAME);
+		const envPaths: string[] | undefined = config.get(ENVS_SETTING_NAME);
 
-		if (!envs || envs.length === 0) {
+		// check env paths specified
+		if (!envPaths || envPaths.length === 0) {
 			vscode.window.showErrorMessage(
 				'You need to specify environments you want to have parity across',
 				'Open Settings'
@@ -35,42 +39,50 @@ export function activate(context: vscode.ExtensionContext) {
 					vscode.commands.executeCommand('workbench.action.openSettings', `${EXT_NAME}.${ENVS_SETTING_NAME}`);
 				}
 			});
-			return null;
+			return;
 		}
 
-		function getEnvs(envPaths: string[]): Env[] {
-			if(envPaths.length < 2) {
-				return envPaths.map(e => {
+		// check env paths exist
+		const notFound = envPaths.find(p => !existsSync(join(root, p)));
+		if(notFound) {
+			vscode.window.showErrorMessage(
+				`Configured environment path "${notFound}" should be a valid path to folder with environment code.`,
+				'Open Settings'
+			).then(selection => {
+				if (selection === 'Open Settings') {
+					vscode.commands.executeCommand('workbench.action.openSettings', `${EXT_NAME}.${ENVS_SETTING_NAME}`);
+				}
+			});
+			return;
+		}
+
+		// calculate env names
+		const envs = (function getEnvs(eps: string[]): Env[] {
+			if(eps.length < 2) {
+				return eps.map(path => {
 					return {
-						name: e,
-						path: e
+						name: path,
+						path: path
 					}
 				});
 			}
-			const tokenized: string[][] = 
-				envPaths
-					.map(s => s.replace(/^\/+|\/+$/g, ''))
-					.map(s => s.split("/"))
-					.filter(s => s.length > 0);
 
-			function names(ss: string[][]): string[] {
-				if(ss.length === 0) return []
-				else if(ss.find(s => s.length === 0)) return []
-				else if(new Set(ss.map(ts => ts[0])).size > 1) return ss.map(e => e.join("/"))
-				else return names(ss.map(e => e.slice(1)))
+			function names(pathName: [path: string, nameSegments: string[]][]): [string, string[]][] {
+				if(pathName.length === 0) return [];
+				else if(pathName.find(s => s[1].length === 0)) throw new Error("Environment paths can't be subdirectories or each other.");
+				else if(new Set(pathName.map(pn => pn[1][0])).size > 1) return pathName;
+				else return names(pathName.map(pn => [pn[0], pn[1].slice(1)]))
 			}
 			
-			const ns = names(tokenized);
-
-			return ns.map(function(n: string, i: number) {
+			const envs: Env[] = names(eps.map(s => [s, s.split("/")])).map(pn => {
 				return {
-					name: n,
-					path: tokenized[i].join("/")
-				}}
-			);
-		}
-		
-		const es = getEnvs(envs);
+					name: pn[1].join("/"),
+					path: pn[0]
+				}
+			});
+
+			return envs;
+		})(envPaths);
 
 		const editor = vscode.window.activeTextEditor;
 		if (!editor) {
@@ -80,37 +92,37 @@ export function activate(context: vscode.ExtensionContext) {
 		const fileUri = editor.document.uri;
 		const filePath = fileUri.fsPath;
 
-		// find bros
-		const fileEnv = es.find(e => filePath.includes(e.path));
+		// find bro envs
+		const fileEnv = envs.find(e => filePath.includes(e.path));
 		if (!fileEnv) {
 			vscode.window.showErrorMessage(`File is not under any environment`);
-			return null;
+			return;
 		}
-		const broEnvs = es.filter(e => e !== fileEnv);
+		const broEnvs = envs.filter(e => e !== fileEnv);
 
-		// choose bro
+		// show bro envs menu
 		const fileContent = (await vscode.workspace.fs.readFile(fileUri)).toString();
 		const options: QuickPickItemWithAction[] = await Promise.all(broEnvs.map(async env => {
-			const broPath = filePath.replace(fileEnv., env);
+			const broPath = filePath.replace(fileEnv.path, env.path);
 			const broUri = Uri.file(broPath);
 			if (existsSync(broPath)) {
 				const broContent = (await vscode.workspace.fs.readFile(broUri)).toString();
 				if (broContent === fileContent) {
 					return {
-						label: `$(check) ${env}`,
+						label: `$(check) ${env.name}`,
 						detail: `Match:\t\t\t${shorten(broPath)}`,
 						action: compare(fileUri, broUri)
 					};
 				} else {
 					return {
-						label: `$(request-changes) ${env}`,
+						label: `$(request-changes) ${env.name}`,
 						detail: `Different:\t\t${shorten(broPath)}`,
 						action: compare(fileUri, broUri)
 					};
 				}
 			} else {
 				return {
-					label: `$(circle-slash) ${env}`,
+					label: `$(circle-slash) ${env.name}`,
 					detail: `Not found:\t\t${shorten(broPath)}`,
 					action: 
 					() => {
