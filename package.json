@@ -17,7 +17,7 @@
     "commands": [
       {
         "command": "terra-parity.run",
-        "title": "Environments parity"
+        "title": "Terra parity"
       }
     ],
     "configuration": {
