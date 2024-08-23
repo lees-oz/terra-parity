@@ -69,7 +69,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 			function names(pathName: [path: string, nameSegments: string[]][]): [string, string[]][] {
 				if(pathName.length === 0) return [];
-				else if(pathName.find(s => s[1].length === 0)) throw new Error("Environment paths can't be subdirectories or each other.");
+				else if(pathName.find(s => s[1].length === 0)) throw new Error("Environment paths can't be sub-directories of each other.");
 				else if(new Set(pathName.map(pn => pn[1][0])).size > 1) return pathName;
 				else return names(pathName.map(pn => [pn[0], pn[1].slice(1)]))
 			}
@@ -95,7 +95,7 @@ export function activate(context: vscode.ExtensionContext) {
 		// find bro envs
 		const fileEnv = envs.find(e => filePath.includes(e.path));
 		if (!fileEnv) {
-			vscode.window.showErrorMessage(`File is not under any environment`);
+			vscode.window.showErrorMessage(`File ${filePath} is not under any environment. Choose the one from under the environments paths.`);
 			return;
 		}
 		const broEnvs = envs.filter(e => e !== fileEnv);
@@ -110,20 +110,20 @@ export function activate(context: vscode.ExtensionContext) {
 				if (broContent === fileContent) {
 					return {
 						label: `$(check) ${env.name}`,
-						detail: `Match:\t\t\t${shorten(broPath)}`,
+						detail: `Match:\t\t${shorten(broPath)}`,
 						action: compare(fileUri, broUri)
 					};
 				} else {
 					return {
 						label: `$(request-changes) ${env.name}`,
-						detail: `Different:\t\t${shorten(broPath)}`,
+						detail: `Different:\t${shorten(broPath)}`,
 						action: compare(fileUri, broUri)
 					};
 				}
 			} else {
 				return {
 					label: `$(circle-slash) ${env.name}`,
-					detail: `Not found:\t\t${shorten(broPath)}`,
+					detail: `Not found:\t${shorten(broPath)}`,
 					action: 
 					() => {
 						return vscode.workspace.fs.copy(fileUri, broUri).then(compare(fileUri, broUri));
