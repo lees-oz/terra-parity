@@ -30,10 +30,17 @@
             "type": "string"
           },
           "default": [],
-          "description": "Paths to folders that contain environments (dev, test, prod, etc.) under them. Specify two or more paths using \"Add Item\" button"
+          "description": "Relative Paths to the folders containing resources of environments that you'd like to keep similar. Specify two or more paths using \"Add Item\" button."
         }
       }
-    }
+    },
+    "keybindings": [
+      {
+        "command": "terra-parity.run",
+        "key": "ctrl+e",
+        "when": "editorTextFocus"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -44,6 +51,7 @@
     "test": "vscode-test"
   },
   "devDependencies": {
+    "@eslint/js": "^9.9.1",
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
     "@types/vscode": "^1.92.0",
@@ -52,6 +60,8 @@
     "@vscode/test-cli": "^0.0.9",
     "@vscode/test-electron": "^2.4.0",
     "eslint": "^8.57.0",
-    "typescript": "^5.4.5"
+    "globals": "^15.9.0",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^8.2.0"
   }
 }

@@ -86,7 +86,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 		const editor = vscode.window.activeTextEditor;
 		if (!editor) {
-			vscode.window.showWarningMessage('Select terraform file first');
+			vscode.window.showErrorMessage('First open desired file in editor');
 			return null;
 		}
 		const fileUri = editor.document.uri;
@@ -95,12 +95,12 @@ export function activate(context: vscode.ExtensionContext) {
 		// find bro envs
 		const fileEnv = envs.find(e => filePath.includes(e.path));
 		if (!fileEnv) {
-			vscode.window.showErrorMessage(`File ${filePath} is not under any environment. Choose the one from under the environments paths.`);
+			vscode.window.showErrorMessage(`File ${filePath} doesn't belong to any of the configured environments. Choose another file or re-configure environments paths.`);
 			return;
 		}
+		
+		// calculate bro envs
 		const broEnvs = envs.filter(e => e !== fileEnv);
-
-		// show bro envs menu
 		const fileContent = (await vscode.workspace.fs.readFile(fileUri)).toString();
 		const options: QuickPickItemWithAction[] = await Promise.all(broEnvs.map(async env => {
 			const broPath = filePath.replace(fileEnv.path, env.path);
@@ -111,26 +111,38 @@ export function activate(context: vscode.ExtensionContext) {
 					return {
 						label: `$(check) ${env.name}`,
 						detail: `Match:\t\t${shorten(broPath)}`,
-						action: compare(fileUri, broUri)
+						action: () => 
+							vscode.commands.executeCommand('revealInExplorer', broUri)
+								.then(() => vscode.window.showTextDocument(broUri, { preview: false }))
+								.then(() => {}, e => {throw e})
 					};
 				} else {
 					return {
 						label: `$(request-changes) ${env.name}`,
 						detail: `Different:\t${shorten(broPath)}`,
-						action: compare(fileUri, broUri)
+						action: () => 
+							vscode.commands.executeCommand('revealInExplorer', broUri)
+								.then(() => vscode.commands.executeCommand(
+									'vscode.diff',
+									fileUri, 
+									broUri,
+									`${shorten(fileUri.path)} ↔ ${shorten(broUri.path)}`)
+								)
 					};
 				}
 			} else {
 				return {
 					label: `$(circle-slash) ${env.name}`,
 					detail: `Not found:\t${shorten(broPath)}`,
-					action: 
-					() => {
-						return vscode.workspace.fs.copy(fileUri, broUri).then(compare(fileUri, broUri));
-					}
+					action: () => 
+						vscode.workspace.fs.copy(fileUri, broUri)
+							// .then(() => vscode.commands.executeCommand('revealInExplorer', broUri))
+							// .then(() => vscode.window.showTextDocument(fileUri))
+							// .then(() => {}, e => {throw e})
 				};
 			}}));
 
+		// show menu
 		const quickPick = vscode.window.createQuickPick<QuickPickItemWithAction>();
 		quickPick.items = options;
 		quickPick.onDidChangeSelection(selection => {
@@ -144,15 +156,6 @@ export function activate(context: vscode.ExtensionContext) {
 		function shorten(p: string): string {
 			const r = p.replace(root, "");
 			return `...${r.slice(r.length - 70)}`;
-		}
-
-		function compare(a: Uri, b: Uri): () => Thenable<void> {
-			return () => vscode.commands.executeCommand(
-				'vscode.diff',
-				a,
-				b,
-				`${shorten(a.path)} ↔ ${shorten(b.path)}`
-			);
 		}
 	});
 
