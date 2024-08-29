@@ -153,6 +153,8 @@ export function activate(context: vscode.ExtensionContext) {
 		});
 		quickPick.show();
 
+		return;
+
 		function shorten(p: string): string {
 			const r = p.replace(root, "");
 			return `...${r.slice(r.length - 70)}`;

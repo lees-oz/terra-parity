@@ -2,6 +2,7 @@
   "name": "terra-parity",
   "displayName": "Terraform/terragrunt environments parity",
   "description": "Quickly find, compare and align code of corresponding infra resources across environments.",
+  "repository": "https://github.com/lees-oz/terra-parity",
   "icon": "images/logo.png",
   "version": "0.0.1",
   "publisher": "lees-oz",
@@ -12,7 +13,7 @@
     "Other"
   ],
   "activationEvents": [],
-  "main": "./out/extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
@@ -60,7 +61,7 @@
   "devDependencies": {
     "@eslint/js": "^9.9.1",
     "@types/mocha": "^10.0.7",
-    "@types/node": "20.x",
+    "@types/node": "^20.16.2",
     "@types/vscode": "^1.92.0",
     "@typescript-eslint/eslint-plugin": "^7.14.1",
     "@typescript-eslint/parser": "^7.11.0",

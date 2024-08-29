@@ -2,7 +2,7 @@
 .vscode-test/**
 src/**
 .gitignore
-.yarnrc
+package-lock.json
 vsc-extension-quickstart.md
 **/tsconfig.json
 **/.eslintrc.json
@@ -12,8 +12,8 @@ vsc-extension-quickstart.md
 test-tf-repo
 eslint.config.mjs
 .vscode
-node_modules
 out/
 tsconfig.json
 esbuild.js
 TODO.md
+node_modules
