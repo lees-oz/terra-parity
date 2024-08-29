@@ -3,7 +3,7 @@
   "displayName": "Terraform/terragrunt environments parity",
   "description": "Quickly find, compare and align code of corresponding infra resources across environments.",
   "icon": "images/logo.png",
-  "version": "0.0.3",
+  "version": "0.0.1",
   "publisher": "lees-oz",
   "engines": {
     "vscode": "^1.92.0"
@@ -38,14 +38,21 @@
       {
         "command": "terra-parity.run",
         "key": "ctrl+e",
+        "mac": "ctrl+e",
+        "win": "ctrl+alt+e",
+        "linux": "ctrl+alt+e",
         "when": "editorTextFocus"
       }
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "compile": "npm run check-types && node esbuild.js",
+    "check-types": "tsc --noEmit",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "vscode:prepublish": "npm run package",
+    "package": "npm run check-types && node esbuild.js --production",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "vscode-test"
@@ -59,6 +66,7 @@
     "@typescript-eslint/parser": "^7.11.0",
     "@vscode/test-cli": "^0.0.9",
     "@vscode/test-electron": "^2.4.0",
+    "esbuild": "^0.23.1",
     "eslint": "^8.57.0",
     "globals": "^15.9.0",
     "typescript": "^5.4.5",
