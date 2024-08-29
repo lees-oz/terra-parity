@@ -3,7 +3,7 @@
 </p>
 
 # Terra parity
-*Terra parity* is made to improve productivity and quality for engineers utilizing Infrastructure as Code for building software systems. It helps to navigate 
+*Terra parity* is made to improve productivity and quality for engineers utilizing Infrastructure as Code for building software systems.
 
 You should be able to benefit from this extension, if the following applies to you:
 - **folder per environment:** in infrastructure code as code repository each environment (`dev`, `test`, `prod` etc.) has a dedicated folder
