@@ -13,37 +13,45 @@ then infrastructure code (folder structure and resources code) would have a lot 
 
 ***Terra parity* is aiming to help engineers make changes to such code a bit more robust by providing a way to quickly navigate, compare and align code of corresponding resources.**
 
-# Get started
-## Configure it
-*Environment paths* is the only required setting. It is a set of environments folders relative paths. Copy relative path of your environment folder from Explorer view
+# How to use
+## Configure
+*Environment paths* is the only required setting. It is a set of relative paths to environments you'd like to have parity between.
+Copy relative paths of your environments folders from **Explorer**
 <p align="center">
 <img src="images/copy-path.png" alt="drawing" width="350"/>
 </p>
 
-
-and add it to *Environment paths* using button "Add Item"
+and these to `.vscode/settings.json`:
+```
+{
+  "terra-parity.Environment paths": [
+    "path/to/dev",
+    "path/to/test",
+    "path/to/prod"
+  ]
+}
+```
+or use **Settings->Workspace->Extensions->Terra parity** UI using button "Add Item"
 <p align="center">
 <img src="images/config.png" alt="drawing" width="700"/>
 </p>
 
-Repeat this for all IaC environments folders.
+You could use **User** settings as opposed to the **Workspace** settings. But using Workspace settings is handier in case you work with multiple IaC repositories, having different environments and paths.
 
-**Note: currently extension only supports one configurable list of environments, so if you work with multiple IaC repositories, then you'd need to re-configure *Environment paths* every time you want to use it for another IaC repository. This is not handy, but this is also a first iteration. In case you find this extension useful and want multi-repo configuration to be implemented, create issue or submit Pull request at https://github.com/lees-oz/terra-parity**
-
-## Use it
-1. Open one of the environment IaC file in the Editor.
+## Use
+1. Open one of the environment IaC file in the **Editor**.
 <p align="center">
 <img src="images/open.png" alt="drawing" width="700"/>
 </p>
 
-2. Run command *Terra parity* from command palette (`⇧⌘P`) or press hotkey: `⌃E` for Mac OS or `Ctrl+Alt+E` for Windows & Linux.
+2. Run command *Terra parity* from command palette (`⇧⌘P`) or use hotkey `⌃E` for Mac OS or `Ctrl+Alt+E` for Windows & Linux.
 <p align="center">
 <img src="images/invoke.png" alt="drawing" width="700"/>
 </p>
 
 3. *Terra parity* will determine the *opened file*'s environment based on configured *Environments paths* and for every other environment will try to find the *corresponding file*. *Corresponding file* is the file located under the other environment's and the same subpath as the *opened file*'s subpath from its environment. The file will be compared with opened file's content and the menu item will be rendered.
 
-- In case the files contents are **same**, the menu will indicate it with text "Match". Upon selection the corresponding resource file will be revealed in Explorer and opened in Editor.
+- In case the files contents are **same**, the menu will indicate it with text "Match". Upon selection the corresponding resource file will be revealed in **Explorer** and opened in **Editor**.
 <p align="center">
 <img src="images/match.png" alt="drawing" width="550"/>
 </p>
@@ -74,16 +82,16 @@ When selected:
 <img src="images/new.png" alt="drawing" width="1000"/>
 </p>
 
-## Usage Example
+# Why - Usage Example
 
 You provision infrastructure for a web application that has three environments - `dev`, `test` and `prod`. Your infrastructure as code has folder dedicated to each environment. For example:
 <p align="center">
 <img src="images/envs.png" alt="drawing" width="200"/>
 </p>
 
-## Below are examples of engineers workflows when *Terra parity* might be helpful.
+Below are examples of engineers workflows when *Terra parity* might be helpful
 
-1. You work on feature which involves adding new `resource2`. After adding it on `dev` you'd typically want to navigate to `test-env/eu-west-1/component1`, create folder `resource2` and create `terragrunt.hcl` file there.In this example this isn't a big issue to do it manually - the file could easily be found in the Explorer. However for the size of any real IaC repository navigating to the right folder, creating subfolders and file would take you some time and energy. *Terra parity* automates that. Upon invocation it will render menu informing you that the  files are not found under on `test` and `prod` (`test-env/eu-west-1/component1/resource2/terragrunt.hcl` and `prod-env/eu-west-1/component1/resource2/terragrunt.hcl`). Choosing either menu will *copy* `terragrunt.hcl` to a corresponding location (with creation of missing folders) and open new file in Editor.
+1. You work on feature which involves adding new `resource2`. After adding it on `dev` you'd typically want to navigate to `test-env/eu-west-1/component1`, create folder `resource2` and create `terragrunt.hcl` file there.In this example this isn't a big issue to do it manually - the file could easily be found in the **Explorer**. However for the size of any real IaC repository navigating to the right folder, creating subfolders and file would take you some time and energy. *Terra parity* automates that. Upon invocation it will render menu informing you that the  files are not found under on `test` and `prod` (`test-env/eu-west-1/component1/resource2/terragrunt.hcl` and `prod-env/eu-west-1/component1/resource2/terragrunt.hcl`). Choosing either menu will *copy* `terragrunt.hcl` to a corresponding location (with creation of missing folders) and open new file in **Editor**.
 
 2. You work on feature that involves changing `app1`'s `resource1`. Again, normally you'd want to first make change on `dev` and afterwards repeat it on `test` and ensure both are aligned - either are plain copied of each other or have few for-a-good-reason differences. And again, navigating to `test` (or `prod`) could be a time consuming routine, as well as calling a comparison window to ensure the change is copied properly. *Terra parity* automates that. Upon invocation it render menu informing you that `dev-env/eu-west-1/component1/resource1/terragrunt.hcl` differs from both other envifonment's corresponding resources - `test-env/eu-west-1/component1/resource1/terragrunt.hcl` and `prod-env/eu-west-1/component1/resource1/terragrunt.hcl`. Selecting either of the menus will open files comparison window, where the `test` or `prod` could be aligned with `dev` right in place.
 
