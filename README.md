@@ -9,7 +9,7 @@ You should be able to benefit from this extension, if the following applies to y
 - **folder per environment:** in infrastructure code as code repository each environment (`dev`, `test`, `prod` etc.) has a dedicated folder
 - **dev/prod parity:** you'd like to keep your environments *as similar as possible* (see https://12factor.net/dev-prod-parity)
 
-then infrastructure code (folder structure and resources code) would have a lot of duplication across different environments and few for-a-good-reason differences.
+Because then the folder structure and resources code would have a lot of duplication across different environments and few for-a-good-reason differences.
 
 ***Terra parity* is aiming to help engineers make changes to such code a bit more robust by providing a way to quickly navigate, compare and align code of corresponding resources.**
 
@@ -21,7 +21,7 @@ Copy relative paths of your environments folders from **Explorer**
 <img src="images/copy-path.png" alt="drawing" width="350"/>
 </p>
 
-and these to `.vscode/settings.json`:
+and add these to `.vscode/settings.json`:
 ```
 {
   "terra-parity.Environment paths": [
@@ -31,53 +31,52 @@ and these to `.vscode/settings.json`:
   ]
 }
 ```
-or use **Settings->Workspace->Extensions->Terra parity** UI using button "Add Item"
+or use VS Code UI - **Settings->Workspace->Extensions->Terra parity** and add paths one by one with `Add Item` button
 <p align="center">
 <img src="images/config.png" alt="drawing" width="700"/>
 </p>
 
-You could use **User** settings as opposed to the **Workspace** settings. But using Workspace settings is handier in case you work with multiple IaC repositories, having different environments and paths.
+You could use **User** settings as opposed to the **Workspace** settings. Howeever using **Workspace** settings is handier in case you work with multiple IaC repositories, having different environments and paths.
 
 ## Use
-1. Open one of the environment IaC file in the **Editor**.
+1. Open one of the environment IaC files in **Editor**.
 <p align="center">
 <img src="images/open.png" alt="drawing" width="700"/>
 </p>
 
-2. Run command *Terra parity* from command palette (`⇧⌘P`) or use hotkey `⌃E` for Mac OS or `Ctrl+Alt+E` for Windows & Linux.
+2. Run *Terra parity* from command palette (`⇧⌘P`) or use hotkey `⌃E` for Mac OS or `Ctrl+Alt+E` for Windows & Linux.
 <p align="center">
 <img src="images/invoke.png" alt="drawing" width="700"/>
 </p>
 
-3. *Terra parity* will determine the *opened file*'s environment based on configured *Environments paths* and for every other environment will try to find the *corresponding file*. *Corresponding file* is the file located under the other environment's and the same subpath as the *opened file*'s subpath from its environment. The file will be compared with opened file's content and the menu item will be rendered.
+3. *Terra parity* will determine the *opened file*'s environment (based on configured *Environments paths*) and the subpath and for every other environment will try to find the *corresponding file* - file located under same subpath of another environment path. *Opened file*'s content will be compared with *Corresponding file*'s content and the menu item will be rendered displaying the comparison result.
 
-- In case the files contents are **same**, the menu will indicate it with text "Match". Upon selection the corresponding resource file will be revealed in **Explorer** and opened in **Editor**.
+- In case the files contents are **same**, the menu will indicate it with text "Match". 
 <p align="center">
 <img src="images/match.png" alt="drawing" width="550"/>
 </p>
 
-When selected:
-
+Upon selection the corresponding resource file will be revealed in **Explorer** and opened in **Editor**:
 <p align="center">
 <img src="images/navigate.png" alt="drawing" width="1000"/>
 </p>
 
-- In case the files contents **differ**, the menu will indicate it with text "Different". Upon selection the files comparison will be opened.
+- In case the files contents **differ**, the menu will indicate it with text "Different".
 <p align="center">
 <img src="images/diff.png" alt="drawing" width="550"/>
 </p>
 
-When selected:
+Upon selection the files comparison will be opened:
 <p align="center">
 <img src="images/comparison.png" alt="drawing" width="1000"/>
 </p>
 
-- In case the file **doesn't exist** on that environment, the menu will indicate it with text "Not found". Upon selection the opened file will be copied to corresponding environment's location.
+- In case the file **doesn't exist** on that environment, the menu will indicate it with text "Not found".
 <p align="center">
 <img src="images/not-found.png" alt="drawing" width="550"/>
 </p>
 
-When selected:
+Upon selection the opened file will be copied to corresponding environment's location:
 <p align="center">
 <img src="images/new.png" alt="drawing" width="1000"/>
 </p>
