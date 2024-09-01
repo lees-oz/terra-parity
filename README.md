@@ -6,10 +6,10 @@
 *Terra parity* is made to improve productivity and quality for engineers utilizing Infrastructure as Code for building software systems.
 
 You should be able to benefit from this extension, if the following applies to you:
-- **folder per environment:** in infrastructure code as code repository each environment (`dev`, `test`, `prod` etc.) has a dedicated folder
+- **folder per environment:** in infrastructure code as code repository each environment (`dev`, `test`, `prod` etc.) has a dedicated folder, as opposed to approach with same code for many environments (for example when using terraform's `tfvars` or `workspaces`)
 - **dev/prod parity:** you'd like to keep your environments *as similar as possible* (see https://12factor.net/dev-prod-parity)
 
-Because then the folder structure and resources code would have a lot of duplication across different environments and few for-a-good-reason differences.
+Why? Because then the folder structure and resources code would have a lot of duplication across different environments and few for-a-good-reason differences.
 
 ***Terra parity* is aiming to help engineers make changes to such code a bit more robust by providing a way to quickly navigate, compare and align code of corresponding resources.**
 
