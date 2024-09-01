@@ -4,7 +4,7 @@
   "description": "Quickly find, compare and align code of corresponding infra resources across environments.",
   "repository": "https://github.com/lees-oz/terra-parity",
   "icon": "images/logo.png",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "lees-oz",
   "engines": {
     "vscode": "^1.92.0"
